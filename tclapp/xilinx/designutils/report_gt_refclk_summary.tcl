@@ -231,33 +231,67 @@ set bd_dk [current_bd_design]
           } else {
           set LANE_SEL_DICT ""
           set settings_string [evaluate_bd_properties {*}$txIntfcs {*}$rxIntfcs]
-          set LANE_SEL_DICT [dict create]
+		  puts "settings_string == $settings_string"
+		  puts " "
+		  set LANE_SEL_DICT [dict create]
           dict lappend LANE_SEL_DICT [dict get $settings_string RX0_LANE_SEL] RX0
+		  puts "LANE_SEL_DICT == $LANE_SEL_DICT"
           dict lappend LANE_SEL_DICT [dict get $settings_string RX1_LANE_SEL] RX1
+		  puts "LANE_SEL_DICT == $LANE_SEL_DICT"
           dict lappend LANE_SEL_DICT [dict get $settings_string RX2_LANE_SEL] RX2
+		  puts "LANE_SEL_DICT == $LANE_SEL_DICT"
           dict lappend LANE_SEL_DICT [dict get $settings_string RX3_LANE_SEL] RX3
+		  puts "LANE_SEL_DICT == $LANE_SEL_DICT"
           dict lappend LANE_SEL_DICT [dict get $settings_string TX0_LANE_SEL] TX0
+		  puts "LANE_SEL_DICT == $LANE_SEL_DICT"
           dict lappend LANE_SEL_DICT [dict get $settings_string TX1_LANE_SEL] TX1
+		  puts "LANE_SEL_DICT == $LANE_SEL_DICT"
           dict lappend LANE_SEL_DICT [dict get $settings_string TX2_LANE_SEL] TX2
+		  puts "LANE_SEL_DICT == $LANE_SEL_DICT"
           dict lappend LANE_SEL_DICT [dict get $settings_string TX3_LANE_SEL] TX3
+		  puts "LANE_SEL_DICT == $LANE_SEL_DICT"
           set keys_lsk [dict keys $LANE_SEL_DICT]
+
+		  puts "keys_lsk == $keys_lsk"
+		  puts " "
           set prot_num [llength $keys_lsk]
+		  puts "prot_num == $prot_num"
+		  puts " "
           set ref_clk_d [get_property CONFIG.REFCLK_STRING [get_bd_cells ${quadCell}]]
+		  puts "ref_clk_d == $ref_clk_d "
+		  puts " "
+		  puts "quadCell == $quadCell"
+		  puts " "
+		  puts "CONFIG.REFCLK_STRING == $ref_clk_d"
+		  puts " "
           set REFCLK_EXTERNAL_CONNECT                    [dict values $ref_clk_d]
+		  puts "REFCLK_EXTERNAL_CONNECT == $REFCLK_EXTERNAL_CONNECT"
+		  puts " "
           set REFCLK_EXTERNAL_CONNECT_UNIQUE             [uniquify_list $REFCLK_EXTERNAL_CONNECT]
+		  puts "REFCLK_EXTERNAL_CONNECT_UNIQUE == $REFCLK_EXTERNAL_CONNECT_UNIQUE"
+		  puts " "
           set NO_OF_REFCLK_EXTERNAL_CONNECT              [llength $REFCLK_EXTERNAL_CONNECT_UNIQUE ]
+		  puts "NO_OF_REFCLK_EXTERNAL_CONNECT == $NO_OF_REFCLK_EXTERNAL_CONNECT"
+		  puts " "
           set temp_cnt 0
           set ref_clk_src ""
           for {set n 0} {$n < $NO_OF_REFCLK_EXTERNAL_CONNECT } {incr n} {
            set temp_cnt [expr $temp_cnt+1]
            set temp [lindex $REFCLK_EXTERNAL_CONNECT_UNIQUE $n]
            set freq_val [string map {"\_unique6" ""} [string map {"\_unique5" ""} [string map {"\_unique4" ""} [string map {"\_unique3" ""} [string map {"\_unique2" ""} [string map {"\_unique1" ""} [string map {"\_MHz" ""} [string map {"PROT0_" ""} [string map {"PROT1_" ""} [string map {"PROT2_" ""} [string map {"PROT3_" ""} [string map {"PROT4_" ""} [string map {"PROT5_" ""} [string map {"PROT6_" ""} [string map {"PROT7_" ""} [string map {"refclk_" ""} [string map {"R0_" ""} [string map {"R1_" ""} [string map {"R2_" ""} [string map {"R3_" ""} [string map {"R4_" ""} [string map {"R5_" ""} $temp ]]]]]]]]]]]]]]]]]]]]]]
+		   puts "freq_val == $freq_val"
            if {[string match "*multiple*" $freq_val]} {
+			   puts "multiple found in freq_val"
            set multiple_freq_type [string map {"\_unique6" ""} [string map {"\_unique5" ""} [string map {"\_unique4" ""} [string map {"\_unique3" ""} [string map {"\_unique2" ""} [string map {"\_unique1" ""} [string map {"\_MHz" ""}  [string map {"refclk_" ""} [string map {"\_ext_freq" ""} [string map {"multiple_" ""} $temp ]]]]]]]]]]
+		   puts "multiple_freq_type == $multiple_freq_type"
            set multiple_freq_prot_type [string map {"\_unique6" ""} [string map {"\_unique5" ""} [string map {"\_unique4" ""} [string map {"\_unique3" ""} [string map {"\_unique2" ""} [string map {"\_unique1" ""} [string map {"\_MHz" ""}  [string map {"refclk_" ""} [string map {"\_ext_freq" ""} [string map {"multiple_" ""} [string map {"\_R0" ""} [string map {"\_R1" ""} [string map {"\_R2" ""} [string map {"\_R3" ""} [string map {"\_R4" ""} [string map {"\_R5" ""} $temp ]]]]]]]]]]]]]]]]
+		   puts "multiple_freq_prot_type == $multiple_freq_prot_type"
            set multi_freq_port_name [string map {"\_unique6" ""} [string map {"\_unique5" ""} [string map {"\_unique4" ""} [string map {"\_unique3" ""} [string map {"\_unique2" ""} [string map {"\_unique1" ""} [string map {"\_MHz" ""}  [string map {"refclk_" ""} [string map {"\_ext_freq" ""} [string map {"multiple_" ""} [string map {"\PROT0_" ""} [string map {"\PROT1_" ""} [string map {"\PROT2_" ""} [string map {"\PROT3_" ""} [string map {"\PROT4_" ""} [string map {"\PROT5_" ""} [string map {"\PROT6_" ""} [string map {"\PROT7_" ""} $temp ]]]]]]]]]]]]]]]]]]
+		   puts "multi_freq_port_name == $multi_freq_port_name"
             set snumk [expr $snumk+1]
             set list_AK0 [list $snumk]
+            set statement " "
+			set statement_list [list ]
             set ref_name $quadCell\/GT_REFCLK$n
             set ref_clk_src [find_connected_core $ref_name]
 			if { $ref_clk_src eq "" } {
@@ -267,8 +301,10 @@ set bd_dk [current_bd_design]
             lappend list_AK0 "multiple"
             set prot_val ""
               if {[string match "PROT0" $multiple_freq_prot_type]} {
+				  puts "Reached here 1"
                   set prot_val "PROT0"
               } elseif {[string match "PROT1" $multiple_freq_prot_type]} {
+				  puts "Reached here 2"
                   set prot_val "PROT1"
               } elseif {[string match "PROT2" $multiple_freq_prot_type]} {
                   set prot_val "PROT2"
@@ -289,15 +325,20 @@ set bd_dk [current_bd_design]
                set lkeyf "$quadCell\/$lkeya1\_GT_IP_INTERFACE"
                set pCellName [find_connected_core $lkeyf]
                lappend list_AK0 $pCellName
+				  puts "Reached here 3"
 
            } else {
              set freq_val_with_prot_src [string map {"\_unique6" ""} [string map {"\_unique5" ""} [string map {"\_unique4" ""} [string map {"\_unique3" ""} [string map {"\_unique2" ""} [string map {"\_unique1" ""} [string map {"\_MHz" ""}  [string map {"refclk_" ""} $temp ]]]]]]]]
+			 puts "freq_val_with_prot_src == $freq_val_with_prot_src"
               set freq_val_with_prot_src_space [string map {"\_" " "}  $freq_val_with_prot_src ]
+			  puts "freq_val_with_prot_src_space == $freq_val_with_prot_src_space"
               set new_list [list ]
               set new_list $freq_val_with_prot_src_space
               set freq_val_with_prot_src_space [lsearch -inline -all -not -exact $new_list $freq_val]
+			  puts "freq_val_with_prot_src_space == $freq_val_with_prot_src_space"
               set prot_src_dict [dict create]
               set prot_src_dict $freq_val_with_prot_src_space
+			  puts "prot_src_dict == $prot_src_dict"
               set prot_src_info ""
               set snumk [expr $snumk+1]
               set list_AK0 [list $snumk]
@@ -309,31 +350,76 @@ set bd_dk [current_bd_design]
               lappend list_AK0 $ref_name
               set SRC ""
               set prot_src_info ""
+
+				  puts "Reached here 4"
                foreach PROT { PROT0 PROT1 PROT2 PROT3 PROT4 PROT5 PROT6 PROT7 } {
+				  puts "Reached here 5"
+				  puts "prot_src_dict == $prot_src_dict"
                if { [dict exists $prot_src_dict $PROT] } {
+				  puts "Reached here 6"
+				  puts "prot_src_dict == $prot_src_dict"
                   set SRC [dict get $prot_src_dict $PROT]
+				  puts "Reached here 7"
+				  puts "prot_src_dict == $prot_src_dict"
+				  puts "SRC == $SRC"
                   set prot_src_info [concat "$prot_src_info $PROT,"]
+				  puts "Reached here 8"
+				  puts "prot_src_info == $prot_src_info"
                }
                }
+
+				  puts "Reached here 9"
                set prot_src_info1 [string range $prot_src_info 0 end-1]
+			   puts "prot_src_info1 == $prot_src_info1"
+			   puts ""
                set prot_src_sp [split $prot_src_info1 " "]
+			   puts "prot_src_sp == $prot_src_sp"
                lappend list_AK0 $freq_val
                set pCellName ""
                set pCellName1 ""
                set num_parIP 0
                foreach ikk $prot_src_sp {
+				   puts "ikk == $ikk"
+				   puts " "
                set num_parIP [expr $num_parIP+1]
+			   puts "num_parIP == $num_parIP"
+			   puts " "
+				  puts "Reached here 10"
 
                 ## Check here, update PROT vs RX/TX interface level logic
                set prot_src_info2 $ikk
+			   puts "prot_src_info2 == $prot_src_info2"
+			   puts " "
                set prot_src_sp1 [split $prot_src_info2 ","]
+			   puts "prot_src_sp1 == $prot_src_sp1"
+			   puts " "
                set prot_src_info [lindex $prot_src_sp1 0]
+			   puts "prot_src_info == $prot_src_info"
+			   puts " "
+			   puts "LANE_SEL_DICT == $LANE_SEL_DICT"
+			   puts " "
+				  puts "Reached here 11"
+			   if {[dict exists $LANE_SEL_DICT $prot_src_info]} { 
                set lkey [dict get $LANE_SEL_DICT $prot_src_info]
+			   puts "lkey == $lkey"
+				  puts "Reached here 12"
+			   puts " "
                set lkeya [split $lkey " "]
+			   puts "lkeya == $lkeya "
+			   puts " "
+				  puts "Reached here 13"
                set lkeya [lsort -unique $lkeya]
+			   puts "lkeya == $lkeya"
+			   puts " "
+				  puts "Reached here 14"
 
                set lkeya1 [lindex $lkeya 0]
+			   puts "lkeya1 == $lkeya1"
+			   puts " "
+
                set lkeyf "$quadCell\/$lkeya1\_GT_IP_INTERFACE"
+			   puts "lkeyf == $lkeyf "
+			   puts " "
                set pCellName [find_connected_core $lkeyf]
                lappend pCellName1 $pCellName
                set pCellName1 [lsort -unique $pCellName1]
@@ -342,9 +428,17 @@ set bd_dk [current_bd_design]
                } else {
                  set pCellName $pCellName1
                }
-
+			  set statement_flag 0
+		   } else { 
+			  set statement_flag 1
+			  set statement "Interface properties are not updated properly for quad $quadCell. Refclk frequencies may be incorrect or not be reported correctly. "
+           }
                }
                lappend list_AK0 $pCellName
+			   if {$statement_flag} {
+	           lappend statement_list $statement
+			   set unique_statement [lsort -unique $statement_list]
+		       }
 
 
            }
@@ -353,10 +447,27 @@ set bd_dk [current_bd_design]
           $tbl1 addrow $list_AK0
 
          }
+    #####       if {[string match "unconnected" $keys_lsk]} {
+	##### 		  set statement "Interface properties are not updated properly for quad $quadCell. Please make sure parent IP connetction to the quad is proper and interface parameter values are propegated successfully. Also please refer summary.log file for each quad in project for the reference clock information "
+    #####            
+	##### 	  } else { 
+	#####      
+	#####      }
+	     
         }
         }
-        puts $outfilek [$tbl1 print]
+		puts $outfilek "The following data is generated based on the interface parameter values propagated from parent IP to Quad."
         puts $outfilek "  "
+		if {$statement_flag} {
+		foreach sentence $unique_statement {
+		puts $outfilek "  $sentence"
+	    }
+        puts $outfilek "  "
+		puts $outfilek " Please make sure parent IP connection to the quad is proper and interface parameter values are propegated successfully. Also please refer summary.log file for each quad in project for the reference clock information "
+     	}
+        puts $outfilek "  "
+        puts $outfilek [$tbl1 print]
+		puts $outfilek " "
         if {$numq == 1} {
          if {[llength $norepQuad] > 1} {
            puts $outfilek "Note:     Below mentioned quad IPs are unconnected, hence reference clock summary is not generated for these IPs"
@@ -390,9 +501,14 @@ set bd_dk [current_bd_design]
         puts $outfilek "          1) Remove the Utility Buffer instantiation and associated external port connected to <gt_quad_base_j>_GTREFCLK1, <gt_quad_base_k>_GTREFCLK2"
         puts $outfilek "          2) Short the required gt_quad_base reference clocks (<gt_quad_base_i>_GTREFCLK0,<gt_quad_base_j>_GTREFCLK1,<gt_quad_base_k>_GTREFCLK2) at the Quad instance level."
         puts $outfilek ""
+        if {$gt_t == "GTM"} {
+        puts $outfilek "Imp Note: While optimizing please ensure Quads are placed adjacently and follow below rules(please refer AM017-Chapter2 Section:Reference clock selection and distribution)."
+        puts $outfilek "For Versal devices, sourcing of the reference clock is limited to two Quads above and below for duals operating at line rates from 9.5 Gb/s to 29 Gb/s (NRZ) and 19 Gb/s to 56.42 Gb/s (PAM4).Channels should source a local reference clock (from within its own Quad) for highest performance."
+        } else {
         puts $outfilek "Imp Note: While optimizing please ensure Quads are placed adjacently and follow below rules(please refer AM002-Chapter2 Section:Reference clock selection and distribution)."
         puts $outfilek " "
         puts $outfilek "          For Versal devices, sourcing of the reference clock is limited to two Quads above and below."
+        }
         puts $outfilek " "
         puts $outfilek " "
         puts $outfilek " =============================== Command to generate GT_REFCLOCK Summary in gt_quad_base IP based designs ==============================="
@@ -561,6 +677,9 @@ proc ::tclapp::xilinx::designutils::report_gt_refclk_summary::evaluate_bd_proper
                 #set TX${txIdx}_ADDN_FILE     [get_property CONFIG.ADDITIONAL_CONFIG_FILE $txHandle]
                 set TX${txIdx}_GT_DIRECTION  [get_property CONFIG.GT_DIRECTION $txHandle]
                 set TX${txIdx}_GT_SETTINGS       [get_property CONFIG.TX_SETTINGS $txHandle]
+				set para_tx "TX${txIdx}_GT_SETTINGS" 
+				set tx_para [subst $$para_tx]
+				puts "TX${txIdx}_GT_SETTINGS == $tx_para"
                 set var "TX${txIdx}_PARENT_ID"
                 set PID [subst $$var]
 
@@ -589,6 +708,9 @@ proc ::tclapp::xilinx::designutils::report_gt_refclk_summary::evaluate_bd_proper
                 #set RX${rxIdx}_ADDN_FILE     [get_property CONFIG.ADDITIONAL_CONFIG_FILE $rxHandle]
                 set RX${rxIdx}_GT_DIRECTION  [get_property CONFIG.GT_DIRECTION $rxHandle]
                 set RX${rxIdx}_GT_SETTINGS       [get_property CONFIG.RX_SETTINGS $rxHandle]
+				set para_rx "RX${rxIdx}_GT_SETTINGS" 
+				set rx_para [subst $$para_rx]
+				puts "RX${rxIdx}_GT_SETTINGS == $rx_para"
                 set var "RX${rxIdx}_PARENT_ID"
                 set PID [subst $$var]
 
